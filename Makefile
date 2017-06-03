@@ -26,4 +26,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(DEPS)
 .PHONY: clean
 
 clean:
-	rm -f $(OBJ_DIR)/*.o
+	rm -f $(BIN_DIR)/* $(OBJ_DIR)/*.o
