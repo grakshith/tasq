@@ -1,0 +1,19 @@
+language: cpp
+sudo: required
+dist: trusty
+compiler:
+- gcc
+os:
+- linux
+addons:
+  apt:
+    packages:
+    - libboost-all-dev
+before_script: mkdir build && mkdir bin
+script: make -j4
+notifications:
+  email:
+    - hehaichi@gmail.com
+env:
+  global:
+  - LANG="en_US.UTF-8"
