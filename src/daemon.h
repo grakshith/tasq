@@ -9,14 +9,18 @@ public:
 	Daemon();
 	~Daemon();
 
-	boost::asio::io_service _io_service;							//Service for I/O operations
-    boost::asio::ip::tcp::acceptor _acceptor;    					//Acceptor used to listen to incoming connections
+	boost::asio::io_service _io_service;			//Service for client I/O operations
+	boost::asio::io_service worker_io_service;		//Service for worker I/O operations
+    boost::asio::ip::tcp::acceptor _acceptor;   	//Acceptor used to listen to incoming connections
+    boost::asio::ip::tcp::acceptor worker_acceptor;	//Acceptor used to listen to incoming worker connections
     boost::asio::ip::tcp::socket incoming_socket;
     boost::thread_group _thread_group;
+    std::vector<boost::asio::ip::tcp::socket*> worker_list;
 
-    unsigned short port;
+    unsigned short port, worker_port;
 
     void runThreads(int, char**);
     void incomingConnHandler();
+    void workerConnHandler();
 
 };
