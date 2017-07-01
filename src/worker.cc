@@ -16,8 +16,8 @@ void Worker::runThreads(int argc, char **argv){
 void Worker::daemonConnHandler(){
 	tcp::endpoint daemon_conn_endpoint(address::from_string("127.0.0.1"), daemon_port);
 	daemon_socket.connect(daemon_conn_endpoint);
-	std::vector<char> message(2);
-	boost::asio::read(daemon_socket,boost::asio::buffer(message,2));
+	std::vector<char> message(3);
+	boost::asio::read(daemon_socket,boost::asio::buffer(message,3));
 	std::cout<<std::string(message.begin(), message.end());
 }
 

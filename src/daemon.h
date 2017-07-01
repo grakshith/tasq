@@ -3,6 +3,7 @@
 #include <arpa/inet.h>
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 class Daemon{
 public:

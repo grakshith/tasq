@@ -13,6 +13,7 @@ Daemon::~Daemon(){}
 
 void Daemon::runThreads(int argc, char **argv){
 	_thread_group.add_thread(new boost::thread(&Daemon::incomingConnHandler,this));
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	_thread_group.add_thread(new boost::thread(&Daemon::workerConnHandler,this));
 	_thread_group.join_all();
 }
@@ -47,7 +48,10 @@ void Daemon::incomingConnHandler(){
 		_acceptor.accept(incoming_socket);
 		std::cout<<"Connection from "<<incoming_socket.remote_endpoint().address().to_string()<<":"
 				 <<std::to_string(incoming_socket.remote_endpoint().port())<<std::endl;
-		std::string message = "OK";
+		std::vector<char> location(100);
+		incoming_socket.read_some(boost::asio::buffer(location, 100));
+		std::cout<<std::string(location.begin(), location.end());
+		std::string message = "OK\n";
 		boost::asio::write(incoming_socket,boost::asio::buffer(&message[0],message.size()));
 		incoming_socket.close();
 	}
