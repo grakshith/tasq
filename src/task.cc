@@ -6,10 +6,9 @@ worker_id(""),
 daemon_id(""){
     has_started=false;
     has_ended=false;
-    type=SHL;		
+    _type=SHL;
 }
 
-Task::~Task(){}
 
 void Task::set_worker_id(string id){
     this->worker_id = id;
@@ -19,10 +18,10 @@ void Task::set_daemon_id(string id){
     this->daemon_id = id;
 }
 
-string Task::get_type(){
-    return this->type;
+Task::type Task::get_type(){
+    return this->_type;
 }
 
-string get_location(){
+string Task::get_location(){
     return this->location;
 }

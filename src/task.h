@@ -11,11 +11,11 @@ private:
     string daemon_id;
     void set_worker_id(string);
     void set_daemon_id(string);
+    Task::type _type;
 public:
     Task(string);
-    ~Task();
 
-    string get_type();
+    type get_type();
     string get_location();
 
 };

@@ -6,7 +6,7 @@ OBJ_DIR=build
 LIBS=-lboost_system -lboost_filesystem -lboost_thread
 
 SRC_DIR=src
-_DEPS = daemon.h worker.h shell.h
+_DEPS = daemon.h worker.h shell.h task.h
 DEPS = $(patsubst %,$(SRC_DIR)/%,$(_DEPS))
 
 # _OBJ = daemon.o
@@ -15,7 +15,7 @@ DEPS = $(patsubst %,$(SRC_DIR)/%,$(_DEPS))
 
 all: $(BIN_DIR)/daemon $(BIN_DIR)/worker $(BIN_DIR)/shell
 
-$(BIN_DIR)/daemon: build/daemon.o
+$(BIN_DIR)/daemon: build/daemon.o build/task.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 $(BIN_DIR)/worker: build/worker.o
@@ -23,7 +23,6 @@ $(BIN_DIR)/worker: build/worker.o
 
 $(BIN_DIR)/shell: build/shell.o
 	$(CXX) -o $@ $^ $(CXXFLAGS)
-
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(DEPS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
