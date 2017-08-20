@@ -1,7 +1,8 @@
 #include "task.h"
 
-Task::Task(string location):
+Task::Task(string location, string content):
 location(location),
+content(content),
 worker_id(""),
 daemon_id(""){
     has_started=false;

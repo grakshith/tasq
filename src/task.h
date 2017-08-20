@@ -5,6 +5,7 @@ using namespace std;
 class Task{
 private:
     string location;
+    string content;
     enum type{SHL, PY};
     bool has_started, has_ended;
     string worker_id;
@@ -13,7 +14,7 @@ private:
     void set_daemon_id(string);
     Task::type _type;
 public:
-    Task(string);
+    Task(string, string);
 
     type get_type();
     string get_location();
