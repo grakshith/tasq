@@ -52,6 +52,8 @@ void Daemon::incoming_conn_handler(){
         incoming_socket.read_some(boost::asio::buffer(location, 100));
         std::string task_location = std::string(location.begin(), location.end());
         shared_ptr<Task> new_task = create_new_task(task_location);
+        // Debug
+        std::cout<<new_task->get_location()<<endl;
         std::cout<<"New Task created"<<std::endl;
         push_task_to_queue(new_task);
         std::string message = "OK\n";
@@ -67,7 +69,12 @@ void Daemon::push_task_to_queue(std::shared_ptr<Task> &t){
 }
 
 std::shared_ptr<Task> Daemon::create_new_task(string &location){
-    std::shared_ptr<Task> t(new Task(location));
+    std::ifstream file(location, std::ios::in);
+    if(!file.is_open())
+        std::cout<<"Error"<<endl;
+    std::stringstream buf;
+    buf << file.rdbuf();
+    return std::make_shared<Task>(location,buf.str());
 }
 
 int main(int argc, char** argv){
