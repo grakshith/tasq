@@ -3,7 +3,7 @@ CXXFLAGS=-std=c++11 -I. -L /usr/lib/x86-64-linux-gnu/boost/
 BIN_DIR=bin
 OBJ_DIR=build
 
-LIBS=-lboost_system -lboost_filesystem -lboost_thread
+LIBS=-lboost_system -lboost_filesystem -lboost_thread -lboost_log -lpthread -lboost_log_setup
 
 SRC_DIR=src
 _DEPS = daemon.h worker.h shell.h task.h
@@ -15,7 +15,7 @@ DEPS = $(patsubst %,$(SRC_DIR)/%,$(_DEPS))
 
 all: $(BIN_DIR)/daemon $(BIN_DIR)/worker $(BIN_DIR)/shell
 
-$(BIN_DIR)/daemon: build/daemon.o build/task.o
+$(BIN_DIR)/daemon: build/daemon.o build/task.o build/logger.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 $(BIN_DIR)/worker: build/worker.o
