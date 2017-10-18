@@ -23,17 +23,17 @@ void Daemon::worker_conn_handler(){
     worker_acceptor.open(worker_conn_endpoint.protocol());
     worker_acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
     worker_acceptor.bind(worker_conn_endpoint);
-    std::cout<<"Tasq is listening for workers on port "<<worker_port<<std::endl;
+    LOG_INFO<<"Tasq is listening for workers on port "<<worker_port<<std::endl;
     while(1){
         worker_acceptor.listen();
         boost::asio::ip::tcp::socket *worker_socket = new boost::asio::ip::tcp::socket(worker_io_service);
         worker_acceptor.accept(*worker_socket);
-        std::cout<<"Connection from "<<worker_socket->remote_endpoint().address().to_string()<<":"
+        LOG_INFO<<"Connection from "<<worker_socket->remote_endpoint().address().to_string()<<":"
                  <<std::to_string(worker_socket->remote_endpoint().port())<<std::endl;
         worker_list.push_back(worker_socket);
         std::string message = "OK";
         boost::asio::write(*worker_socket, boost::asio::buffer(&message[0], message.size()));
-        std::cout<<"Sent"<<std::endl;
+        LOG_DEBUG<<"Sent"<<std::endl;
     }
 }
 
@@ -42,20 +42,23 @@ void Daemon::incoming_conn_handler(){
     _acceptor.open(incoming_conn_endpoint.protocol());
     _acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
     _acceptor.bind(incoming_conn_endpoint);
-    std::cout<<"Tasq Daemon is now listening on port "<<port<<std::endl;
+    LOG_INFO<<"Tasq Daemon is now listening on port "<<port<<std::endl;
     while(1){
         _acceptor.listen();
         _acceptor.accept(incoming_socket);
-        std::cout<<"Connection from "<<incoming_socket.remote_endpoint().address().to_string()<<":"
+        LOG_INFO<<"Connection from "<<incoming_socket.remote_endpoint().address().to_string()<<":"
                  <<std::to_string(incoming_socket.remote_endpoint().port())<<std::endl;
         std::vector<char> location(100);
         incoming_socket.read_some(boost::asio::buffer(location, 100));
-        std::string task_location = std::string(location.begin(), location.end());
-        shared_ptr<Task> new_task = create_new_task(task_location);
+        std::vector<char>::iterator delimiter = std::find(location.begin(), location.end(), '\n');
+        std::string task_location = std::string(location.begin(), delimiter);
+        task_location.shrink_to_fit();
+        int new_task_status = create_new_task(task_location);
         // Debug
-        std::cout<<new_task->get_location()<<endl;
-        std::cout<<"New Task created"<<std::endl;
-        push_task_to_queue(new_task);
+        if(new_task_status==0)
+            LOG_INFO<<"New Task created"<<std::endl;
+        else
+            LOG_ERROR<<"Failed to create a new task"<<std::endl;
         std::string message = "OK\n";
         boost::asio::write(incoming_socket,boost::asio::buffer(&message[0],message.size()));
         incoming_socket.close();
@@ -68,13 +71,19 @@ void Daemon::push_task_to_queue(std::shared_ptr<Task> &t){
     push_mtx.unlock();
 }
 
-std::shared_ptr<Task> Daemon::create_new_task(string &location){
-    std::ifstream file(location, std::ios::in);
-    if(!file.is_open())
-        std::cout<<"Error"<<endl;
+int Daemon::create_new_task(string &location){
+    std::ifstream file;
+    LOG_DEBUG<<"Create new task->"<<location<<endl;
+    file.open(location.c_str(), std::ios::in);
+    if(!file.is_open()){
+        perror("Error");
+        return 1;
+    }
     std::stringstream buf;
     buf << file.rdbuf();
-    return std::make_shared<Task>(location,buf.str());
+    shared_ptr<Task> new_task = std::make_shared<Task>(location,buf.str());
+    push_task_to_queue(new_task);
+    return 0;
 }
 
 int main(int argc, char** argv){
