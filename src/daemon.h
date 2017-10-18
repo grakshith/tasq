@@ -4,9 +4,14 @@
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <mutex>
 #include <fstream>
+#include <boost/algorithm/string.hpp>
 #include "task.h"
+#include "logger.h"
 
 class Daemon{
 public:
@@ -29,7 +34,7 @@ public:
     void incoming_conn_handler();
     void worker_conn_handler();
     void push_task_to_queue(std::shared_ptr<Task>&);
-    std::shared_ptr<Task> create_new_task(string&);
+    int create_new_task(string&);
     void update();
 
 };
