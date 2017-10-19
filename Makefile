@@ -1,12 +1,12 @@
 CXX=g++
-CXXFLAGS=-std=c++11 -I. -L /usr/lib/x86-64-linux-gnu/boost/
+CXXFLAGS=-std=c++11 #-I. -L /usr/lib/x86-64-linux-gnu/boost/
 BIN_DIR=bin
 OBJ_DIR=build
 
 LIBS=-lboost_system -lboost_filesystem -lboost_thread -lboost_log -lpthread -lboost_log_setup
 
 SRC_DIR=src
-_DEPS = daemon.h worker.h shell.h task.h
+_DEPS = daemon.h worker.h shell.h task.h logger.h
 DEPS = $(patsubst %,$(SRC_DIR)/%,$(_DEPS))
 
 # _OBJ = daemon.o
