@@ -9,12 +9,12 @@ Worker::Worker():_io_service(),
 Worker::~Worker(){}
 
 void Worker::runThreads(int argc, char **argv){
-    _thread_group.add_thread(new boost::thread(&Worker::daemonConnHandler,this));
+    _thread_group.add_thread(new boost::thread(&Worker::daemonConnHandler,this,argv[1]));
     _thread_group.join_all();
 }
 
-void Worker::daemonConnHandler(){
-    tcp::endpoint daemon_conn_endpoint(address::from_string("127.0.0.1"), daemon_port);
+void Worker::daemonConnHandler(std::string addr){
+    tcp::endpoint daemon_conn_endpoint(address::from_string(addr), daemon_port);
     daemon_socket.connect(daemon_conn_endpoint);
     std::vector<char> message(3);
     boost::asio::read(daemon_socket,boost::asio::buffer(message,3));
@@ -24,6 +24,10 @@ void Worker::daemonConnHandler(){
 
 
 int main(int argc, char** argv){
+    if(argc<2){
+        std::cerr<<"Usage: worker <daemon addr>\n";
+        return 1;
+    }
     try{
         Worker worker;
         worker.runThreads(argc, argv);

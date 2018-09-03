@@ -31,7 +31,7 @@ void Daemon::worker_conn_handler(){
         LOG_INFO<<"Connection from "<<worker_socket->remote_endpoint().address().to_string()<<":"
                  <<std::to_string(worker_socket->remote_endpoint().port())<<std::endl;
         worker_list.push_back(worker_socket);
-        std::string message = "OK";
+        std::string message = "OK\n";
         boost::asio::write(*worker_socket, boost::asio::buffer(&message[0], message.size()));
         LOG_DEBUG<<"Sent"<<std::endl;
     }

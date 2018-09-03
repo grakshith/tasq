@@ -3,6 +3,7 @@
 #include <arpa/inet.h>
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
+#include "logger.h"
 
 class Worker{
 public:
@@ -16,6 +17,6 @@ public:
     unsigned short daemon_port;
 
     void runThreads(int, char**);
-    void daemonConnHandler();
+    void daemonConnHandler(std::string);
 
 };

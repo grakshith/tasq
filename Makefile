@@ -18,7 +18,7 @@ all: $(BIN_DIR)/daemon $(BIN_DIR)/worker $(BIN_DIR)/shell
 $(BIN_DIR)/daemon: build/daemon.o build/task.o build/logger.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
-$(BIN_DIR)/worker: build/worker.o
+$(BIN_DIR)/worker: build/worker.o build/logger.o
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 $(BIN_DIR)/shell: build/shell.o
